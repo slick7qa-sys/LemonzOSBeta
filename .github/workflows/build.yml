@@ -1,0 +1,24 @@
+name: Build LemonzOS
+on: [push, workflow_dispatch]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup System
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y mkosi systemd-container arch-install-scripts
+
+      - name: Bake LemonzOS
+        run: |
+          chmod +x mkosi.postinst
+          sudo mkosi --force build
+
+      - name: Upload LemonzOS Image
+        uses: actions/upload-artifact@v4
+        with:
+          name: LemonzOS-Disk-Image
+          path: LemonzOS.raw
