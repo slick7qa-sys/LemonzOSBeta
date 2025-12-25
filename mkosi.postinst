@@ -1,8 +1,10 @@
 #!/bin/bash
 set -e
 
-# Rename the system
+# Basic system name
 echo "lemonzos" > /etc/hostname
+
+# Update the OS name in the settings
 sed -i 's/PRETTY_NAME=.*/PRETTY_NAME="LemonzOS"/' /etc/os-release
 
-echo "LemonzOS: Basic build complete."
+echo "Post-install script finished successfully."
