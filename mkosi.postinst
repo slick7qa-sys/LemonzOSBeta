@@ -1,29 +1,17 @@
 #!/bin/bash
 set -e
 
-echo "🍋 Polishing LemonzOS..."
+# Rename the OS
+sed -i 's/PRETTY_NAME=.*/PRETTY_NAME="LemonzOS v1"/' /etc/os-release
+sed -i 's/NAME=.*/NAME="LemonzOS"/' /etc/os-release
 
-# 1. System Identity
-echo "LemonzOS" > /etc/hostname
-sed -i 's/Debian/LemonzOS/g' /etc/os-release
-sed -i 's/ID=debian/ID=lemonzos/g' /etc/os-release
-
-# 2. Force macOS Dock (Plank) Settings
-mkdir -p /etc/skel/.config/plank/dock1/
-cat <<EOF > /etc/skel/.config/plank/dock1/settings
-[PlankDockSettings]
-IconSize=64
-HideMode=1
-Theme=Transparent
-EOF
-
-# 3. Auto-start the Dock
+# Setup the macOS Dock (Plank)
 mkdir -p /etc/skel/.config/autostart
 cat <<EOF > /etc/skel/.config/autostart/plank.desktop
 [Desktop Entry]
 Type=Application
 Exec=plank
-Name=Plank Dock
+Name=Plank
 EOF
 
-echo "Done! LemonzOS is ready to boot."
+echo "LemonzOS Branding Applied."
