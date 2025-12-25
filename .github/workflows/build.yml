@@ -7,16 +7,22 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Clean and Install Tools
+      - name: Install Dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y mkosi systemd-container erofs-utils systemd-repart arch-install-scripts systemd-ukify python3-pefile
-          # Wipe any old build artifacts
-          sudo rm -rf mkosi.output/
+          sudo apt-get install -y \
+            mkosi \
+            systemd-container \
+            erofs-utils \
+            systemd-repart \
+            arch-install-scripts \
+            systemd-ukify \
+            python3-pefile
 
       - name: Build LemonzOS
         run: |
           chmod +x mkosi.postinst
+          # Use --force to overwrite any old failed builds
           sudo mkosi --force build
 
       - name: Upload LemonzOS
