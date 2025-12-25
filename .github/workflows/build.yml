@@ -7,18 +7,18 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup System
+      - name: Setup Build Environment
         run: |
           sudo apt-get update
-          sudo apt-get install -y mkosi systemd-container arch-install-scripts
+          sudo apt-get install -y mkosi systemd-container erofs-utils systemd-repart arch-install-scripts
 
-      - name: Bake LemonzOS
+      - name: Build LemonzOS Image
         run: |
           chmod +x mkosi.postinst
           sudo mkosi --force build
 
-      - name: Upload LemonzOS Image
+      - name: Upload Finished OS
         uses: actions/upload-artifact@v4
         with:
           name: LemonzOS-Disk-Image
-          path: LemonzOS.raw
+          path: ./*.raw
