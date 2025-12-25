@@ -1,17 +1,8 @@
 #!/bin/bash
 set -e
 
-# Rename the OS
-sed -i 's/PRETTY_NAME=.*/PRETTY_NAME="LemonzOS v1"/' /etc/os-release
-sed -i 's/NAME=.*/NAME="LemonzOS"/' /etc/os-release
+# Rename the system
+echo "lemonzos" > /etc/hostname
+sed -i 's/PRETTY_NAME=.*/PRETTY_NAME="LemonzOS"/' /etc/os-release
 
-# Setup the macOS Dock (Plank)
-mkdir -p /etc/skel/.config/autostart
-cat <<EOF > /etc/skel/.config/autostart/plank.desktop
-[Desktop Entry]
-Type=Application
-Exec=plank
-Name=Plank
-EOF
-
-echo "LemonzOS Branding Applied."
+echo "LemonzOS: Basic build complete."
