@@ -1,0 +1,29 @@
+#!/bin/bash
+set -e
+
+echo "🍋 Branding LemonzOS..."
+
+# 1. Change the OS Name everywhere
+sed -i 's/Debian/LemonzOS/g' /etc/os-release
+sed -i 's/deepin/LemonzOS/g' /etc/os-release
+
+# 2. Set the macOS-style animation speeds (Faster & Smoother)
+mkdir -p /etc/skel/.config/
+echo "[General]
+render_speed=0
+window_animation_type=1" > /etc/skel/.config/dde-desktop.conf
+
+# 3. Setup the macOS Dock (Plank)
+mkdir -p /etc/skel/.config/autostart
+cat <<EOF > /etc/skel/.config/autostart/plank.desktop
+[Desktop Entry]
+Type=Application
+Exec=plank
+Hidden=false
+NoDisplay=false
+X-GNOME-Autostart-enabled=true
+Name=Plank
+EOF
+
+# 4. Remove Deepin Logos and replace with LemonzOS text
+echo "LemonzOS v1.0" > /etc/lemonzos-version
