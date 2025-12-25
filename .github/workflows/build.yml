@@ -7,10 +7,17 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup Build Environment
+      - name: Install Build Tools
         run: |
           sudo apt-get update
-          sudo apt-get install -y mkosi systemd-container erofs-utils systemd-repart arch-install-scripts
+          sudo apt-get install -y \
+            mkosi \
+            systemd-container \
+            erofs-utils \
+            systemd-repart \
+            arch-install-scripts \
+            systemd-ukify \
+            python3-pefile
 
       - name: Build LemonzOS Image
         run: |
@@ -22,3 +29,4 @@ jobs:
         with:
           name: LemonzOS-Disk-Image
           path: ./*.raw
+          
