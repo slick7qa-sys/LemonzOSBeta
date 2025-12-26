@@ -3,10 +3,8 @@ set -e
 
 # Basic system name
 echo "lemonzos" > /etc/hostname
-hostnamectl set-hostname lemonzos || true
 
 # Update the OS name in the settings
-# We check if the file exists first to avoid errors
 if [ -f /etc/os-release ]; then
     sed -i 's/PRETTY_NAME=.*/PRETTY_NAME="LemonzOS"/' /etc/os-release
 fi
