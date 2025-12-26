@@ -6,7 +6,7 @@ echo "LemonzOS: Finalizing configuration..."
 # 1. Set the hostname
 echo "lemonzos" > /etc/hostname
 
-# 2. Create the network directory (THE FIX)
+# 2. Create the network directory
 mkdir -p /etc/systemd/network/
 
 # 3. Configure networking
@@ -18,10 +18,13 @@ Name=en* eth*
 DHCP=yes
 EOF
 
-# 4. Create a default user
-if ! id "lemon" &>/dev/null; then
+# 4. Create user 'lemon' without the /dev/null check
+# We use --force-badname if needed, but standard 'useradd' is fine here
+if ! getent passwd lemon; then
     useradd -m -s /bin/bash lemon
-    echo "lemon:lemon" | chpasswd
 fi
+
+# 5. Set password using a method that bypasses PAM issues
+echo "lemon:lemon" | chpasswd --crypt-method SHA512
 
 echo "LemonzOS: Post-install complete."
