@@ -24,9 +24,9 @@ jobs:
 
       - name: Build LemonzOS Image
         run: |
+          # Crucial: make the post-install script executable before building
           if [ -f mkosi.postinst ]; then chmod +x mkosi.postinst; fi
           sudo mkosi clean
-          # Added --force to overwrite any previous failed directory attempts
           sudo mkosi build --force
 
       - name: Upload LemonzOS Filesystem
