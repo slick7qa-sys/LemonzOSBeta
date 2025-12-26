@@ -19,17 +19,20 @@ jobs:
             systemd-container \
             bubblewrap \
             debootstrap \
+            systemd-ukify \
             debian-archive-keyring
 
       - name: Build LemonzOS Image
         run: |
           if [ -f mkosi.postinst ]; then chmod +x mkosi.postinst; fi
-          # Force clean before build to avoid 'directory already exists' errors
+          # Clean first to ensure no old lock files exist
           sudo mkosi clean
-          sudo mkosi build
+          # Use --force to override any remaining "smart" checks
+          sudo mkosi build --force
 
       - name: Upload LemonzOS Filesystem
         uses: actions/upload-artifact@v4
         with:
           name: LemonzOS-Filesystem
+          # This ensures we grab the actual folder created
           path: mkosi.output/
