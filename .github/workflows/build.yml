@@ -22,21 +22,19 @@ jobs:
             debootstrap \
             debian-archive-keyring \
             ovmf \
-            erofs-utils
+            erofs-utils \
+            systemd-ukify
 
       - name: Build LemonzOS Image
         run: |
-          # FIX: Make the post-install script executable
-          sudo chmod +x mkosi.postinst
+          # Fix the executable permission for the postinst script
+          chmod +x mkosi.postinst
           
           # Run the build
           sudo mkosi --force
 
-      - name: Upload LemonzOS Filesystem
+      - name: Upload LemonzOS
         uses: actions/upload-artifact@v4
         with:
-          name: LemonzOS-Package
-          path: |
-            LemonzOS*
-            mkosi.output/*
-          if-no-files-found: warn
+          name: LemonzOS-Output
+          path: LemonzOS*
