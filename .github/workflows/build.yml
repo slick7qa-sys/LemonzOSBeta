@@ -1,12 +1,25 @@
-#!/bin/bash
-set -e
+name: Build LemonzOS
+on: [push, workflow_dispatch]
 
-# Basic system name
-echo "lemonzos" > /etc/hostname
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
 
-# Update the OS name in the settings
-if [ -f /etc/os-release ]; then
-    sed -i 's/PRETTY_NAME=.*/PRETTY_NAME="LemonzOS"/' /etc/os-release
-fi
+      - name: Install Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y systemd-container erofs-utils systemd-repart arch-install-scripts systemd-ukify python3-pefile python3-pip dosfstools mtools qemu-utils
 
-echo "Post-install script finished successfully."
+      - name: Install mkosi
+        run: sudo python3 -m pip install mkosi --break-system-packages
+
+      - name: Build OS
+        run: sudo mkosi --force build
+
+      - name: Upload LemonzOS
+        uses: actions/upload-artifact@v4
+        with:
+          name: LemonzOS-Image
+          path: image.raw
