@@ -6,7 +6,10 @@ echo "LemonzOS: Finalizing configuration..."
 # 1. Set the hostname
 echo "lemonzos" > /etc/hostname
 
-# 2. Configure networking (Systemd-networkd)
+# 2. Create the network directory (THE FIX)
+mkdir -p /etc/systemd/network/
+
+# 3. Configure networking
 cat <<EOF > /etc/systemd/network/20-wired.network
 [Match]
 Name=en* eth*
@@ -15,7 +18,7 @@ Name=en* eth*
 DHCP=yes
 EOF
 
-# 3. Create a default user (optional, but helpful for testing)
+# 4. Create a default user
 if ! id "lemon" &>/dev/null; then
     useradd -m -s /bin/bash lemon
     echo "lemon:lemon" | chpasswd
