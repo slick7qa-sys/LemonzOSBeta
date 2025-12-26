@@ -1,12 +1,14 @@
 name: Build LemonzOS
+
 on:
   push:
-    branches: [ main ]
+    branches: [ "main" ]
   workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -14,17 +16,33 @@ jobs:
       - name: Install Build Dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y mkosi systemd-container bubblewrap debootstrap debian-archive-keyring
+          sudo apt-get install -y \
+            mkosi \
+            systemd-container \
+            debootstrap \
+            debian-archive-keyring \
+            ovmf \
+            erofs-utils
 
-      - name: Build LemonzOS
+      - name: Build LemonzOS Image
         run: |
-          # Make sure the post-install script is executable
-          chmod +x mkosi.postinst || true
-          sudo mkosi clean
-          sudo mkosi build --force
+          # We use sudo because mkosi needs to create device nodes and chroot
+          # --force ensures it overwrites any previous partial builds
+          sudo mkosi --force
 
-      - name: Upload OS Directory
+      - name: Check Build Output
+        run: |
+          echo "Listing files to verify output location:"
+          ls -R
+          # This helps us debug if the file isn't where we think it is
+
+      - name: Upload LemonzOS Filesystem
         uses: actions/upload-artifact@v4
         with:
-          name: LemonzOS-Filesystem
-          path: mkosi.output/
+          name: LemonzOS-Package
+          # Based on your logs, the output is named 'LemonzOS' 
+          # in the root directory. We use a wildcard to be safe.
+          path: |
+            LemonzOS*
+            mkosi.output/*
+          if-no-files-found: warn
