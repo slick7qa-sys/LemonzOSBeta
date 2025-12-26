@@ -3,28 +3,22 @@ set -e
 
 echo "LemonzOS: Finalizing configuration..."
 
-# 1. Set the hostname
+# 1. Basics
 echo "lemonzos" > /etc/hostname
-
-# 2. Create the network directory
 mkdir -p /etc/systemd/network/
 
-# 3. Configure networking
+# 2. Networking
 cat <<EOF > /etc/systemd/network/20-wired.network
 [Match]
 Name=en* eth*
-
 [Network]
 DHCP=yes
 EOF
 
-# 4. Create user 'lemon' without the /dev/null check
-# We use --force-badname if needed, but standard 'useradd' is fine here
-if ! getent passwd lemon; then
-    useradd -m -s /bin/bash lemon
-fi
-
-# 5. Set password using a method that bypasses PAM issues
-echo "lemon:lemon" | chpasswd --crypt-method SHA512
+# 3. THE "NO-FAIL" USER CREATION
+# -m: create home
+# -p: set the password immediately (this is the encrypted hash for 'lemon')
+# This avoids using chpasswd entirely!
+useradd -m -s /bin/bash -p '$(openssl passwd -6 lemon)' lemon
 
 echo "LemonzOS: Post-install complete."
