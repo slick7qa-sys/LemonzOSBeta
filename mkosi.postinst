@@ -1,12 +1,24 @@
-#!/bin/sh
+#!/bin/bash
 set -e
 
-# Create a user named lemon with password lemon
-if ! id "lemon" >/dev/null 2>&1; then
-    useradd -m -G sudo -s /bin/bash lemon
+echo "LemonzOS: Finalizing configuration..."
+
+# 1. Set the hostname
+echo "lemonzos" > /etc/hostname
+
+# 2. Configure networking (Systemd-networkd)
+cat <<EOF > /etc/systemd/network/20-wired.network
+[Match]
+Name=en* eth*
+
+[Network]
+DHCP=yes
+EOF
+
+# 3. Create a default user (optional, but helpful for testing)
+if ! id "lemon" &>/dev/null; then
+    useradd -m -s /bin/bash lemon
     echo "lemon:lemon" | chpasswd
-    echo "root:lemon" | chpasswd
 fi
 
-# Ensure the system knows to start the GUI
-systemctl set-default graphical.target
+echo "LemonzOS: Post-install complete."
