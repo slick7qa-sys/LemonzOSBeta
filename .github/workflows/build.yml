@@ -23,10 +23,8 @@ jobs:
 
       - name: Build LemonzOS Image
         run: |
-          # Ensure post-install script is executable if it exists
           if [ -f mkosi.postinst ]; then chmod +x mkosi.postinst; fi
-          
-          # Clean previous failed attempts and build fresh
+          # Force clean before build to avoid 'directory already exists' errors
           sudo mkosi clean
           sudo mkosi build
 
