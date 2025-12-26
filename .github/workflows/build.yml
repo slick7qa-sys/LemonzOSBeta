@@ -11,30 +11,17 @@ jobs:
       - name: Install System Tools and mkosi
         run: |
           sudo apt-get update
-          sudo apt-get install -y \
-            mkosi \
-            systemd-container \
-            erofs-utils \
-            systemd-repart \
-            arch-install-scripts \
-            systemd-ukify \
-            python3-pefile \
-            dosfstools \
-            mtools \
-            qemu-utils \
-            squashfs-tools
+          sudo apt-get install -y mkosi systemd-container erofs-utils systemd-repart arch-install-scripts dosfstools mtools
 
-      - name: Build LemonzOS Image
+      - name: Build LemonzOS Directory
         run: |
-          # Ensure postinst is executable
           if [ -f mkosi.postinst ]; then chmod +x mkosi.postinst; fi
-          # Run the build
+          # This builds the OS into a folder called 'image'
           sudo mkosi --force build
 
-      - name: Upload LemonzOS
+      - name: Upload LemonzOS Files
         uses: actions/upload-artifact@v4
         with:
-          name: LemonzOS-Package
-          # mkosi usually outputs to 'image.raw' or a 'build/' folder 
-          # depending on your mkosi.conf. This catches any .raw file created.
-          path: ./*.raw
+          name: LemonzOS-Filesystem
+          # This uploads the entire folder created by mkosi
+          path: image/
