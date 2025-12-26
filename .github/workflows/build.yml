@@ -1,5 +1,8 @@
 name: Build LemonzOS
-on: [push, workflow_dispatch]
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
 
 jobs:
   build:
@@ -8,18 +11,26 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Install System Tools and mkosi
+      - name: Install Build Dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y mkosi systemd-container erofs-utils systemd-repart arch-install-scripts dosfstools mtools
+          sudo apt-get install -y \
+            mkosi \
+            systemd-container \
+            bubblewrap \
+            debootstrap \
+            debian-archive-keyring
 
-      - name: Build LemonzOS Directory
+      - name: Build LemonzOS Image
         run: |
+          # Ensure post-install script is executable if it exists
           if [ -f mkosi.postinst ]; then chmod +x mkosi.postinst; fi
-          # This builds the OS into a folder called 'image'
-          sudo mkosi --force build
+          
+          # Clean previous failed attempts and build fresh
+          sudo mkosi clean
+          sudo mkosi build
 
-      - name: Upload LemonzOS Files
+      - name: Upload LemonzOS Filesystem
         uses: actions/upload-artifact@v4
         with:
           name: LemonzOS-Filesystem
