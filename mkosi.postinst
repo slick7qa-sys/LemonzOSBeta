@@ -1,53 +1,27 @@
-name: Build LemonzOS
-on: [push, workflow_dispatch]
+[Output]
+Format=disk
+ImageId=LemonzOS
+Bootable=yes
 
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    # Give the runner more space (Linux builds are big)
-    env:
-      TMPDIR: /mnt/tmp
-    
-    steps:
-      - uses: actions/checkout@v4
+[Distribution]
+Distribution=debian
+Release=bookworm
 
-      - name: Free up disk space
-        run: |
-          sudo rm -rf /usr/share/dotnet
-          sudo rm -rf /opt/ghc
-          sudo mkdir -p /mnt/tmp
-          sudo chmod 777 /mnt/tmp
+[Content]
+# Prevent interactive prompts that hang the build
+Environment=DEBIAN_FRONTEND=noninteractive
+Environment=LC_ALL=C.UTF-8
 
-      - name: Install Dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y \
-            systemd-container \
-            erofs-utils \
-            systemd-repart \
-            arch-install-scripts \
-            systemd-ukify \
-            python3-pefile \
-            python3-pip \
-            dosfstools \
-            mtools
+Packages=
+    base-files
+    locales
+    linux-image-amd64
+    systemd-boot
+    deepin-desktop-environment
+    firefox-esr
+    network-manager
+    sudo
+    nano
+    curl
 
-      - name: Install Latest mkosi
-        run: |
-          # Ubuntu's apt version of mkosi is often outdated
-          sudo python3 -m pip install mkosi --break-system-packages
-
-      - name: Build LemonzOS
-        run: |
-          chmod +x mkosi.postinst
-          # Use --force to overwrite old builds
-          sudo mkosi --force build
-
-      - name: Upload LemonzOS
-        uses: actions/upload-artifact@v4
-        with:
-          name: LemonzOS-Package
-          # Upload the image and the checksum
-          path: |
-            ./*.raw
-            ./*.sha256
+RootPassword=lemon
