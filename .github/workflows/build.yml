@@ -19,15 +19,14 @@ jobs:
             systemd-container \
             bubblewrap \
             debootstrap \
-            systemd-ukify \
             debian-archive-keyring
 
       - name: Build LemonzOS Image
         run: |
-          # Crucial: make the post-install script executable before building
           if [ -f mkosi.postinst ]; then chmod +x mkosi.postinst; fi
+          # Force clean before build to avoid 'directory already exists' errors
           sudo mkosi clean
-          sudo mkosi build --force
+          sudo mkosi build
 
       - name: Upload LemonzOS Filesystem
         uses: actions/upload-artifact@v4
