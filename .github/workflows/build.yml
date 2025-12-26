@@ -25,14 +25,12 @@ jobs:
       - name: Build LemonzOS Image
         run: |
           if [ -f mkosi.postinst ]; then chmod +x mkosi.postinst; fi
-          # Clean first to ensure no old lock files exist
           sudo mkosi clean
-          # Use --force to override any remaining "smart" checks
+          # Added --force to overwrite any previous failed directory attempts
           sudo mkosi build --force
 
       - name: Upload LemonzOS Filesystem
         uses: actions/upload-artifact@v4
         with:
           name: LemonzOS-Filesystem
-          # This ensures we grab the actual folder created
           path: mkosi.output/
