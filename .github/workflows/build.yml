@@ -23,5 +23,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: LemonzOS-Filesystem
-          # This uploads the entire folder created by mkosi
-          path: image/
+          path: mkosi.output/
