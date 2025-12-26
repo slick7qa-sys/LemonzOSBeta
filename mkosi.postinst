@@ -1,14 +1,18 @@
-#!/bin/bash
+#!/bin/sh
 set -e
 
-# Rename to LemonzOS
-echo "lemonzos" > /etc/hostname
+echo "Updating repositories..."
+apt-get update
 
-# Setup macOS style dock (Plank)
-mkdir -p /etc/skel/.config/autostart
-cat <<EOF > /etc/skel/.config/autostart/plank.desktop
-[Desktop Entry]
-Type=Application
-Exec=plank
-Name=Plank
-EOF
+echo "Installing Deepin Desktop Environment (this may take a while)..."
+# We use DEBIAN_FRONTEND=noninteractive to prevent the installer from asking questions
+DEBIAN_FRONTEND=noninteractive apt-get install -y task-deepin-desktop
+
+echo "Setting up user..."
+# Sets root password to 'lemon'
+echo "root:lemon" | chpasswd
+# Creates user 'lemon' with password 'lemon'
+useradd -m -G sudo -s /bin/bash lemon
+echo "lemon:lemon" | chpasswd
+
+echo "Installation complete!"
