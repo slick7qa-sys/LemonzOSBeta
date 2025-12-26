@@ -5,21 +5,36 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout Code
+        uses: actions/checkout@v4
 
-      - name: Install Dependencies
+      - name: Install System Tools and mkosi
         run: |
           sudo apt-get update
-          sudo apt-get install -y systemd-container erofs-utils systemd-repart arch-install-scripts systemd-ukify python3-pefile python3-pip dosfstools mtools qemu-utils
+          sudo apt-get install -y \
+            mkosi \
+            systemd-container \
+            erofs-utils \
+            systemd-repart \
+            arch-install-scripts \
+            systemd-ukify \
+            python3-pefile \
+            dosfstools \
+            mtools \
+            qemu-utils \
+            squashfs-tools
 
-      - name: Install mkosi
-        run: sudo python3 -m pip install mkosi --break-system-packages
-
-      - name: Build OS
-        run: sudo mkosi --force build
+      - name: Build LemonzOS Image
+        run: |
+          # Ensure postinst is executable
+          if [ -f mkosi.postinst ]; then chmod +x mkosi.postinst; fi
+          # Run the build
+          sudo mkosi --force build
 
       - name: Upload LemonzOS
         uses: actions/upload-artifact@v4
         with:
-          name: LemonzOS-Image
-          path: image.raw
+          name: LemonzOS-Package
+          # mkosi usually outputs to 'image.raw' or a 'build/' folder 
+          # depending on your mkosi.conf. This catches any .raw file created.
+          path: ./*.raw
