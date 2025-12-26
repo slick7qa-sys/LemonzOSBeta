@@ -26,22 +26,16 @@ jobs:
 
       - name: Build LemonzOS Image
         run: |
-          # We use sudo because mkosi needs to create device nodes and chroot
-          # --force ensures it overwrites any previous partial builds
+          # FIX: Make the post-install script executable
+          sudo chmod +x mkosi.postinst
+          
+          # Run the build
           sudo mkosi --force
-
-      - name: Check Build Output
-        run: |
-          echo "Listing files to verify output location:"
-          ls -R
-          # This helps us debug if the file isn't where we think it is
 
       - name: Upload LemonzOS Filesystem
         uses: actions/upload-artifact@v4
         with:
           name: LemonzOS-Package
-          # Based on your logs, the output is named 'LemonzOS' 
-          # in the root directory. We use a wildcard to be safe.
           path: |
             LemonzOS*
             mkosi.output/*
