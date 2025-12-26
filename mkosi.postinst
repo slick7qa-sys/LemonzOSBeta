@@ -1,27 +1,14 @@
-[Output]
-Format=disk
-ImageId=LemonzOS
-Bootable=yes
+#!/bin/bash
+set -e
 
-[Distribution]
-Distribution=debian
-Release=bookworm
+# Rename to LemonzOS
+echo "lemonzos" > /etc/hostname
 
-[Content]
-# Prevent interactive prompts that hang the build
-Environment=DEBIAN_FRONTEND=noninteractive
-Environment=LC_ALL=C.UTF-8
-
-Packages=
-    base-files
-    locales
-    linux-image-amd64
-    systemd-boot
-    deepin-desktop-environment
-    firefox-esr
-    network-manager
-    sudo
-    nano
-    curl
-
-RootPassword=lemon
+# Setup macOS style dock (Plank)
+mkdir -p /etc/skel/.config/autostart
+cat <<EOF > /etc/skel/.config/autostart/plank.desktop
+[Desktop Entry]
+Type=Application
+Exec=plank
+Name=Plank
+EOF
