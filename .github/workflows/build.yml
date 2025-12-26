@@ -14,21 +14,16 @@ jobs:
       - name: Install Build Dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y \
-            mkosi \
-            systemd-container \
-            bubblewrap \
-            debootstrap \
-            debian-archive-keyring
+          sudo apt-get install -y mkosi systemd-container bubblewrap debootstrap debian-archive-keyring
 
-      - name: Build LemonzOS Image
+      - name: Build LemonzOS
         run: |
-          if [ -f mkosi.postinst ]; then chmod +x mkosi.postinst; fi
-          # Force clean before build to avoid 'directory already exists' errors
+          # Make sure the post-install script is executable
+          chmod +x mkosi.postinst || true
           sudo mkosi clean
-          sudo mkosi build
+          sudo mkosi build --force
 
-      - name: Upload LemonzOS Filesystem
+      - name: Upload OS Directory
         uses: actions/upload-artifact@v4
         with:
           name: LemonzOS-Filesystem
